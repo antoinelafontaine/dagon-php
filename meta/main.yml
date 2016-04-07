@@ -1,0 +1,16 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Antoine Lafontaine
+  description: Multiple versions of PHP using homebrew
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.0
+  platforms:
+    - name: OSX
+      versions:
+        - all
+        - any
+  galaxy_tags:
+    - development
+    - system

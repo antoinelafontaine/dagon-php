@@ -1,0 +1,59 @@
+---
+- name: Install php-version.
+  homebrew:
+    name: php-version
+    state: present
+
+- name: Add homebrew/php tap.
+  homebrew_tap:
+    tap: homebrew/php
+    state: present
+
+- name: Finding out all PHP versions installed with Homebrew.
+  shell: brew list | grep ^php[0-9][0-9]$
+  register: brew_installed_php_versions
+  ignore_errors: yes
+  changed_when: false
+  always_run: true
+
+- name: Unlink any linked PHP versions.
+  homebrew: "name={{ item }} state=unlinked"
+  with_items: "{{ brew_installed_php_versions.stdout_lines }}"
+
+- name: Install requested PHP version.
+  homebrew: "name={{ version_package  }} state=present"
+
+- name: Link PHP version to install modules.
+  homebrew: "name={{ version_package  }} state=linked"
+  when: modules
+
+- name: Install PHP modules.
+  homebrew: "name={{ item }} state=present"
+  when: modules
+  with_items: "{{ modules }}"
+
+- name: Unlink after module installation completed.
+  homebrew: "name={{ version_package }} state=unlinked"
+  when: modules
+
+- name: Create socket folder.
+  file: 
+    path: /usr/local/etc/php/sockets
+    state: directory
+    group: admin
+
+- name: Put our fpm-php.conf in place.
+  template:
+    src: templates/fpm-php.conf.j2
+    dest: "/usr/local/etc/php/{{ version }}/php-fpm.conf"
+  notify: Restart FPM-PHP.
+
+- name: Restart FPM-PHP.
+  shell: brew services restart {{ version_package }}
+  
+- name: Make sure php-version is setup in .bash_profile.
+  lineinfile:
+    dest: '~/.bash_profile'
+    regexp: '^source \$\(brew --prefix php-version\)'
+    line: 'source $(brew --prefix php-version)/php-version.sh && php-version {{ php_version_in_shell }}'
+    state: present
