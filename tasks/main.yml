@@ -37,7 +37,7 @@
   when: modules
 
 - name: Create socket folder.
-  file: 
+  file:
     path: /usr/local/etc/php/sockets
     state: directory
     group: admin
@@ -49,8 +49,8 @@
   notify: Restart FPM-PHP.
 
 - name: Restart FPM-PHP.
-  shell: brew services restart {{ version_package }}
-  
+  shell: sudo brew services restart {{ version_package }}
+
 - name: Make sure php-version is setup in .bash_profile.
   lineinfile:
     dest: '~/.bash_profile'
