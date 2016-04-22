@@ -49,7 +49,7 @@
   notify: Restart FPM-PHP.
 
 - name: Restart FPM-PHP.
-  shell: sudo brew services restart {{ version_package }}
+  shell: brew services restart {{ version_package }}
 
 - name: Make sure php-version is setup in .bash_profile.
   lineinfile:
