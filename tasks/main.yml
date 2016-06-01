@@ -46,6 +46,7 @@
   template:
     src: templates/fpm-php.conf.j2
     dest: "/usr/local/etc/php/{{ version }}/php-fpm.conf"
+    force: yes
   notify: Restart FPM-PHP.
 
 - name: Restart FPM-PHP.
