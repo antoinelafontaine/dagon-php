@@ -1,12 +1,12 @@
 ---
-- name: Install php-version.
-  homebrew:
-    name: php-version
-    state: present
-
 - name: Add homebrew/php tap.
   homebrew_tap:
     tap: homebrew/php
+    state: present
+
+- name: Install php-version.
+  homebrew:
+    name: php-version
     state: present
 
 - name: Finding out all PHP versions installed with Homebrew.
@@ -46,6 +46,13 @@
   template:
     src: templates/fpm-php.conf.j2
     dest: "/usr/local/etc/php/{{ version }}/php-fpm.conf"
+    force: yes
+  notify: Restart FPM-PHP.
+
+- name: Add xdebug ini file for php version.
+  template:
+    src: templates/xdebug.conf.j2
+    dest: "/usr/local/etc/php/{{ version }}/conf.d/xdebug.ini"
     force: yes
   notify: Restart FPM-PHP.
 
