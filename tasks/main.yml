@@ -1,4 +1,5 @@
 ---
+
 - name: Add homebrew/php tap.
   homebrew_tap:
     tap: homebrew/php
@@ -17,23 +18,33 @@
   always_run: true
 
 - name: Unlink any linked PHP versions.
-  homebrew: "name={{ item }} state=unlinked"
+  homebrew:
+    name: "{{ item }}"
+    state: unlinked
   with_items: "{{ brew_installed_php_versions.stdout_lines }}"
 
 - name: Install requested PHP version.
-  homebrew: "name={{ version_package  }} state=present"
+  homebrew:
+    name: "{{ version_package  }}"
+    state: present
 
 - name: Link PHP version to install modules.
-  homebrew: "name={{ version_package  }} state=linked"
+  homebrew:
+    name: "{{ version_package }}"
+    state: linked
   when: modules
 
 - name: Install PHP modules.
-  homebrew: "name={{ item }} state=present"
+  homebrew:
+    name: "{{ item }}"
+    state: present
   when: modules
   with_items: "{{ modules }}"
 
 - name: Unlink after module installation completed.
-  homebrew: "name={{ version_package }} state=unlinked"
+  homebrew:
+    name: "{{ version_package }}"
+    state: unlinked
   when: modules
 
 - name: Create socket folder.
@@ -48,6 +59,11 @@
     dest: "/usr/local/etc/php/{{ version }}/php-fpm.conf"
     force: yes
   notify: Restart FPM-PHP.
+
+- name: Insure we have a conf.d folder
+  file:
+    dest: "/usr/local/etc/php/{{ version }}/conf.d/"
+    state: directory
 
 - name: Add xdebug ini file for php version.
   template:
