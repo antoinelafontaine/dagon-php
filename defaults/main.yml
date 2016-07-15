@@ -2,6 +2,6 @@
 version: 7.0
 version_package: php70
 brew_installed_php_versions: []
-modules:
+modules: []
 php_version_in_shell: 7
 fpm_php_memory_limit: 1024M

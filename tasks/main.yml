@@ -70,7 +70,8 @@
     src: templates/xdebug.conf.j2
     dest: "/usr/local/etc/php/{{ version }}/conf.d/xdebug.ini"
     force: yes
-  notify: Restart FPM-PHP.
+  when: item == "{{ version_package }}-xdebug"
+  with_items: "{{ modules }}"
 
 - name: Restart FPM-PHP.
   shell: brew services restart {{ version_package }}
