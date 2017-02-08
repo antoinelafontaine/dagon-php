@@ -32,20 +32,20 @@
   homebrew:
     name: "{{ version_package }}"
     state: linked
-  when: modules
+  when: modules is defined
 
 - name: Install PHP modules.
   homebrew:
     name: "{{ item }}"
     state: present
-  when: modules
+  when: modules is defined
   with_items: "{{ modules }}"
 
 - name: Unlink after module installation completed.
   homebrew:
     name: "{{ version_package }}"
     state: unlinked
-  when: modules
+  when: modules is defined
 
 - name: Create socket folder.
   file:
@@ -58,7 +58,6 @@
     src: templates/fpm-php.conf.j2
     dest: "/usr/local/etc/php/{{ version }}/php-fpm.conf"
     force: yes
-  notify: Restart FPM-PHP.
 
 - name: Insure we have a conf.d folder
   file:
