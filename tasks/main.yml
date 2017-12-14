@@ -15,7 +15,7 @@
   register: brew_installed_php_versions
   ignore_errors: yes
   changed_when: false
-  always_run: true
+  check_mode: no
 
 - name: Unlink any linked PHP versions.
   homebrew:
@@ -63,14 +63,6 @@
   file:
     dest: "/usr/local/etc/php/{{ version }}/conf.d/"
     state: directory
-
-- name: Add xdebug ini file for php version.
-  template:
-    src: templates/xdebug.conf.j2
-    dest: "/usr/local/etc/php/{{ version }}/conf.d/xdebug.ini"
-    force: yes
-  when: item == "{{ version_package }}-xdebug"
-  with_items: "{{ modules }}"
 
 - name: Restart FPM-PHP.
   shell: brew services restart {{ version_package }}
